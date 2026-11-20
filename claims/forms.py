@@ -13,7 +13,8 @@ class VerificationQuestionForm(forms.ModelForm):
 
     answer = forms.CharField(
         max_length=255,
-        widget=forms.PasswordInput
+        widget=forms.PasswordInput,
+        help_text="Enter the correct answer based on the item's private identifying details."
     )
 
     class Meta:
