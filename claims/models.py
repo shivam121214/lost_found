@@ -37,6 +37,22 @@ class Claim(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
 
+    returned = models.BooleanField(default=False)
+
+    returned_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='supervised_handovers'
+    )
+
+    returned_at = models.DateTimeField(
+        null=True,
+        blank=True
+    )
+
+    handover_notes = models.TextField(blank=True)
     def __str__(self):
         return f"{self.claimant} - {self.item.name}"
 
