@@ -23,6 +23,7 @@ class Item(models.Model):
     image = models.ImageField(upload_to='items/', blank=True, null=True)
     category = models.CharField(max_length=20, choices=CATEGORY_CHOICES)
     description = models.TextField()
+    contact_number = models.CharField(max_length=15, blank=True, null=True)
     private_details = models.TextField(
     blank=True,
     help_text="Private identifying details. Never displayed publicly."

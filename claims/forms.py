@@ -47,9 +47,11 @@ class ClaimVerificationForm(forms.Form):
             )
 
     def answers_correct(self):
-        return all(
+        results = [
             question.check_answer(
                 self.cleaned_data[f'question_{question.id}']
             )
             for question in self.questions
-        )
+        ]
+
+        return all(results)

@@ -10,6 +10,15 @@
 
     <h3>{{ item.name }}</h3>
 
+    <p>
+        <strong>Reporter Contact Number:</strong>
+        {% if item.contact_number %}
+            {{ item.contact_number }}
+        {% else %}
+            Not provided
+        {% endif %}
+    </p>
+
     <p><strong>Category:</strong> {{ item.get_category_display }}</p>
 
     <p><strong>Public Description:</strong> {{ item.description }}</p>

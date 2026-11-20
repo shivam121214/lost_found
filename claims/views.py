@@ -1,10 +1,12 @@
+
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from items.models import Item
-from .forms import ClaimForm,VerificationQuestionForm,ClaimVerificationForm
-from .models import Claim
 from django.views.decorators.http import require_POST
+
+from items.models import Item
+from .forms import ClaimForm, VerificationQuestionForm, ClaimVerificationForm
+from .models import Claim
 
 
 @login_required
@@ -40,10 +42,7 @@ def submit_claim(request, item_id):
             claim.save()
 
             messages.success(request, "Claim submitted successfully!")
-            return redirect('verify_claim',claim_id=claim.id)
-
-    else:
-        form = ClaimForm()
+            return redirect('verify_claim', claim_id=claim.id)
 
     return redirect('browse_items')
 
@@ -59,6 +58,13 @@ def add_verification_question(request, item_id):
         id=item_id,
         item_type='FOUND'
     )
+
+    if not item.private_details:
+        messages.error(
+            request,
+            "This item has no private identifying details. Please ask the reporter to provide them first."
+        )
+        return redirect('browse_items')
 
     if request.method == 'POST':
         form = VerificationQuestionForm(request.POST)
@@ -84,9 +90,11 @@ def add_verification_question(request, item_id):
     })
 
 
-
 @login_required
 def verify_claim(request, claim_id):
+
+    if request.user.role != 'STUDENT':
+        return redirect('login')
 
     claim = get_object_or_404(
         Claim,

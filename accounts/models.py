@@ -58,7 +58,6 @@ class User(AbstractUser):
     university_id = models.CharField(max_length=20, unique=True)
     department = models.CharField(max_length=100)
     role = models.CharField(max_length=10, choices=ROLE_CHOICES)
-
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
