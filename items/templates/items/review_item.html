@@ -1,0 +1,38 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Review Found Item</title>
+</head>
+<body>
+
+    <h1>Review Found Item</h1>
+
+    <h3>{{ item.name }}</h3>
+
+    <p><strong>Category:</strong> {{ item.get_category_display }}</p>
+
+    <p><strong>Public Description:</strong> {{ item.description }}</p>
+
+    <hr>
+
+    <h3>Private Identifying Details (Staff Only)</h3>
+
+    {% if item.private_details %}
+        <p>{{ item.private_details }}</p>
+    {% else %}
+        <p>No private details were provided.</p>
+    {% endif %}
+
+    <hr>
+
+    <a href="{% url 'add_verification_question' item.id %}">
+        Add Verification Question
+    </a>
+
+    <br><br>
+
+    <a href="{% url 'browse_items' %}">Back to Browse Items</a>
+
+</body>
+</html>

@@ -1,0 +1,53 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Staff Claims</title>
+  </head>
+  <body>
+    <h1>Pending Claims</h1>
+
+    {% if claims %} {% for claim in claims %}
+
+    <div>
+      <h3>Item: {{ claim.item.name }}</h3>
+
+      <p>Claimant: {{ claim.claimant.email }}</p>
+
+      <p>University ID: {{ claim.claimant.university_id }}</p>
+
+      <p>Department: {{ claim.claimant.department }}</p>
+
+      <p>Claim Date: {{ claim.created_at }}</p>
+
+      {% if claim.verification_passed %}
+      <p>Verification: Successful</p>
+      {% else %}
+      <p>Verification: Not completed</p>
+      {% endif %} {% if claim.verification_passed %}
+      <form
+        method="POST"
+        action="{% url 'update_claim_status' claim.id 'approve' %}"
+      >
+        {% csrf_token %}
+        <button type="submit">Approve Claim</button>
+      </form>
+      {% endif %}
+
+      <form
+        method="POST"
+        action="{% url 'update_claim_status' claim.id 'reject' %}"
+      >
+        {% csrf_token %}
+        <button type="submit">Reject Claim</button>
+      </form>
+
+      <hr />
+    </div>
+
+    {% endfor %} {% else %}
+    <p>No pending claims available.</p>
+    {% endif %}
+
+    <a href="{% url 'browse_items' %}">Back to Browse Items</a>
+  </body>
+</html>

@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Student Dashboard</title>
+  </head>
+  <body>
+    <h1>Welcome, {{ request.user.first_name|default:request.user.email }}!</h1>
+
+    <p>University ID: {{ request.user.university_id }}</p>
+    <p>Department: {{ request.user.department }}</p>
+    <p>Role: {{ request.user.role }}</p>
+
+    <h2>University Lost & Found System</h2>
+
+    <a href="{% url 'report_item' %}">
+      <button type="button">Report a Lost or Found Item</button>
+    </a>
+
+    <br /><br />
+
+    <a href="{% url 'my_reports' %}">
+      <button type="button">My Reports</button>
+    </a>
+
+    <a href="{% url 'my_claims' %}">
+      <button type="button">My Claims</button>
+    </a>
+
+    <br /><br />
+
+    <a href="{% url 'browse_items' %}">
+      <button type="button">Browse Lost & Found Items</button>
+    </a>
+
+    <p>Your dashboard is ready.</p>
+
+    <form method="POST" action="{% url 'logout' %}">
+      {% csrf_token %}
+      <button type="submit">Logout</button>
+    </form>
+  </body>
+</html>

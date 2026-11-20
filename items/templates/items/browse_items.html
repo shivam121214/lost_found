@@ -1,0 +1,93 @@
+
+<!doctype html>
+<html>
+<head>
+    <title>Browse Items</title>
+</head>
+<body>
+
+    <h1>All Lost and Found Items</h1>
+
+    <form method="GET">
+        <input
+            type="text"
+            name="search"
+            placeholder="Search by item name"
+            value="{{ request.GET.search }}"
+        />
+
+        <select name="item_type">
+            <option value="">All Types</option>
+            <option value="LOST">Lost</option>
+            <option value="FOUND">Found</option>
+        </select>
+
+        <select name="category">
+            <option value="">All Categories</option>
+            <option value="ELECTRONICS">Electronics</option>
+            <option value="DOCUMENTS">Documents</option>
+            <option value="ACCESSORIES">Accessories</option>
+            <option value="CLOTHING">Clothing</option>
+            <option value="OTHER">Other</option>
+        </select>
+
+        <input
+            type="text"
+            name="location"
+            placeholder="Search by location"
+            value="{{ request.GET.location }}"
+        />
+
+        <button type="submit">Search / Filter</button>
+        <a href="{% url 'browse_items' %}">Clear Filters</a>
+    </form>
+
+    <hr>
+
+    {% for item in items %}
+
+        <div>
+            <h3>{{ item.name }}</h3>
+
+            <p>Status: {{ item.get_item_type_display }}</p>
+            <p>Category: {{ item.get_category_display }}</p>
+            <p>Description: {{ item.description }}</p>
+            <p>Location: {{ item.location }}</p>
+            <p>Date: {{ item.date_of_occurrence }}</p>
+
+            {% if item.image %}
+                <img src="{{ item.image.url }}" width="200">
+            {% endif %}
+
+            {% if request.user.role == 'STAFF' and item.item_type == 'FOUND' %}
+                <a href="{% url 'review_item' item.id %}">
+                    <button type="button">Review Private Details</button>
+                </a>
+            {% endif %}
+
+            {% if item.item_type == 'FOUND' and item.reported_by != request.user %}
+                <form method="POST" action="{% url 'submit_claim' item.id %}">
+                    {% csrf_token %}
+                    <button type="submit">Claim This Item</button>
+                </form>
+            {% endif %}
+
+            <hr>
+        </div>
+
+    {% empty %}
+
+        <p>No items have been reported yet.</p>
+
+    {% endfor %}
+
+    {% if request.user.role == 'STAFF' %}
+    <a href="{% url 'staff_claims' %}">
+        <button type="button">Review Pending Claims</button>
+    </a>
+    {% else %}
+        <a href="{% url 'dashboard' %}">Back to Dashboard</a>
+    {% endif %}
+
+</body>
+</html>

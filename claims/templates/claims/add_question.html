@@ -1,0 +1,24 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Verification Question</title>
+</head>
+<body>
+
+    <h1>Add Verification Question</h1>
+
+    <h3>Item: {{ item.name }}</h3>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        {{ form.as_p }}
+
+        <button type="submit">Save Question</button>
+    </form>
+
+    <a href="{% url 'browse_items' %}">Back to Browse Items</a>
+
+</body>
+</html>

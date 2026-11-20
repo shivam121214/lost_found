@@ -1,0 +1,28 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Verify Claim</title>
+</head>
+<body>
+
+    <h1>Verify Your Claim</h1>
+
+    <h3>Item: {{ claim.item.name }}</h3>
+
+    <p>Answer the following questions to verify ownership.</p>
+
+    <p>Attempts used: {{ claim.verification_attempts }}/3</p>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        {{ form.as_p }}
+
+        <button type="submit">Submit Answers</button>
+    </form>
+
+    <a href="{% url 'browse_items' %}">Back to Browse Items</a>
+
+</body>
+</html>
