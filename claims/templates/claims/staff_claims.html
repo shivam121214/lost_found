@@ -6,24 +6,23 @@
   <body>
     <h1>Pending Claims</h1>
 
-    {% if claims %} {% for claim in claims %}
-
+    {% if claims %} {% for claim in claims %} <
     <div>
       <h3>Item: {{ claim.item.name }}</h3>
 
       <p>Claimant: {{ claim.claimant.email }}</p>
-
       <p>University ID: {{ claim.claimant.university_id }}</p>
-
       <p>Department: {{ claim.claimant.department }}</p>
-
       <p>Claim Date: {{ claim.created_at }}</p>
+
+      <p>Claim Status: {{ claim.get_status_display }}</p>
 
       {% if claim.verification_passed %}
       <p>Verification: Successful</p>
       {% else %}
       <p>Verification: Not completed</p>
-      {% endif %} {% if claim.verification_passed %}
+      {% endif %} {% if claim.status == 'PENDING' %} {% if
+      claim.verification_passed %}
       <form
         method="POST"
         action="{% url 'update_claim_status' claim.id 'approve' %}"
@@ -40,6 +39,17 @@
         {% csrf_token %}
         <button type="submit">Reject Claim</button>
       </form>
+
+      {% elif claim.status == 'APPROVED' %} {% if not claim.returned %}
+      <form method="POST" action="{% url 'mark_as_returned' claim.id %}">
+        {% csrf_token %}
+        <button type="submit">Mark as Returned</button>
+      </form>
+      {% else %}
+      <p>Item: Returned successfully</p>
+      <p>Returned By: {{ claim.returned_by.email }}</p>
+      <p>Returned At: {{ claim.returned_at }}</p>
+      {% endif %} {% endif %}
 
       <hr />
     </div>

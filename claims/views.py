@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.views.decorators.http import require_POST
-
+from django.utils import timezone
 from items.models import Item
 from .forms import ClaimForm, VerificationQuestionForm, ClaimVerificationForm
 from .models import Claim
@@ -175,10 +175,9 @@ def staff_claims(request):
         return redirect('login')
 
     claims = Claim.objects.filter(
-        status='PENDING'
+        status__in=['PENDING', 'APPROVED']
     ).select_related(
-        'item',
-        'claimant'
+        'item', 'claimant', 'returned_by'
     ).order_by('-created_at')
 
     return render(request, 'claims/staff_claims.html', {
@@ -221,6 +220,33 @@ def update_claim_status(request, claim_id, action):
     messages.success(
         request,
         f"Claim successfully {action}d."
+    )
+
+    return redirect('staff_claims')
+
+
+@login_required
+@require_POST
+def mark_as_returned(request, claim_id):
+
+    if request.user.role != 'STAFF':
+        return redirect('login')
+
+    claim = get_object_or_404(
+        Claim,
+        id=claim_id,
+        status='APPROVED',
+        returned=False
+    )
+
+    claim.returned = True
+    claim.returned_by = request.user
+    claim.returned_at = timezone.now()
+    claim.save()
+
+    messages.success(
+        request,
+        "Item successfully marked as returned!"
     )
 
     return redirect('staff_claims')

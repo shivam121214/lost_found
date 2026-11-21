@@ -12,4 +12,9 @@ urlpatterns = [
     views.update_claim_status,
     name='update_claim_status'
     ),
+    path(
+    'mark-returned/<int:claim_id>/',
+    views.mark_as_returned,
+    name='mark_as_returned'
+    ),
 ]
