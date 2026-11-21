@@ -7,6 +7,11 @@
 <body>
 
     <h1>Verify Your Claim</h1>
+    {% if messages %}
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+    {% endif %}
 
     <h3>Item: {{ claim.item.name }}</h3>
 

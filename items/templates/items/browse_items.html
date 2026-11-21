@@ -7,6 +7,11 @@
 <body>
 
     <h1>All Lost and Found Items</h1>
+    {% if messages %}
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+    {% endif %}
 
     <form method="GET">
         <input
@@ -66,10 +71,10 @@
             {% endif %}
 
             {% if item.item_type == 'FOUND' and item.reported_by != request.user %}
-                <form method="POST" action="{% url 'submit_claim' item.id %}">
+                <a href="{% url 'submit_claim' item.id %}">
                     {% csrf_token %}
-                    <button type="submit">Claim This Item</button>
-                </form>
+                    <button type="button">Claim This Item</button>
+                </a>
             {% endif %}
 
             <hr>

@@ -17,4 +17,9 @@ urlpatterns = [
     views.mark_as_returned,
     name='mark_as_returned'
     ),
+    path(
+    'confirm-received/<int:claim_id>/',
+    views.confirm_item_received,
+    name='confirm_item_received'
+    ),
 ]

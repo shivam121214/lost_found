@@ -1,12 +1,30 @@
+
 from django import forms
 from .models import Claim, VerificationQuestion
+from items.models import Item
 
 
 class ClaimForm(forms.ModelForm):
 
+    lost_item = forms.ModelChoiceField(
+        queryset=Item.objects.none(),
+        required=True,
+        empty_label="Select your matching LOST report",
+        label="Your Lost Report"
+    )
+
     class Meta:
         model = Claim
-        fields = []
+        fields = ['lost_item']
+
+    def __init__(self, *args, user=None, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        if user:
+            self.fields['lost_item'].queryset = Item.objects.filter(
+                reported_by=user,
+                item_type='LOST'
+            ).order_by('-created_at')
 
 
 class VerificationQuestionForm(forms.ModelForm):
@@ -29,7 +47,6 @@ class VerificationQuestionForm(forms.ModelForm):
             instance.save()
 
         return instance
-
 
 
 class ClaimVerificationForm(forms.Form):

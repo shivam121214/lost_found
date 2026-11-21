@@ -9,6 +9,7 @@ from .forms import ClaimForm, VerificationQuestionForm, ClaimVerificationForm
 from .models import Claim
 
 
+
 @login_required
 def submit_claim(request, item_id):
 
@@ -33,7 +34,7 @@ def submit_claim(request, item_id):
         return redirect('browse_items')
 
     if request.method == 'POST':
-        form = ClaimForm(request.POST)
+        form = ClaimForm(request.POST, user=request.user)
 
         if form.is_valid():
             claim = form.save(commit=False)
@@ -44,7 +45,13 @@ def submit_claim(request, item_id):
             messages.success(request, "Claim submitted successfully!")
             return redirect('verify_claim', claim_id=claim.id)
 
-    return redirect('browse_items')
+    else:
+        form = ClaimForm(user=request.user)
+
+    return render(request, 'claims/submit_claim.html', {
+        'form': form,
+        'item': item,
+    })
 
 
 @login_required
@@ -90,6 +97,7 @@ def add_verification_question(request, item_id):
     })
 
 
+
 @login_required
 def verify_claim(request, claim_id):
 
@@ -104,17 +112,20 @@ def verify_claim(request, claim_id):
 
     if claim.verification_passed:
         messages.info(request, "Your claim is already verified.")
-        return redirect('browse_items')
+        return redirect('my_claims')
 
     if claim.verification_attempts >= 3:
         messages.error(request, "Maximum verification attempts reached.")
-        return redirect('browse_items')
+        return redirect('my_claims')
 
     questions = claim.item.verification_questions.all()
 
     if not questions.exists():
-        messages.error(request, "No verification questions are available.")
-        return redirect('browse_items')
+        messages.info(
+            request,
+            "Verification questions have not been added yet. Please try again later."
+        )
+        return redirect('my_claims')
 
     if request.method == 'POST':
         form = ClaimVerificationForm(
@@ -142,7 +153,10 @@ def verify_claim(request, claim_id):
                     f"Incorrect answers. Attempts used: {claim.verification_attempts}/3"
                 )
 
-            return redirect('browse_items')
+            return render(request, 'claims/verify_claim.html', {
+                'form': ClaimVerificationForm(questions=questions),
+                'claim': claim,
+            })
 
     else:
         form = ClaimVerificationForm(questions=questions)
@@ -250,3 +264,32 @@ def mark_as_returned(request, claim_id):
     )
 
     return redirect('staff_claims')
+
+
+
+@login_required
+@require_POST
+def confirm_item_received(request, claim_id):
+
+    if request.user.role != 'STUDENT':
+        return redirect('login')
+
+    claim = get_object_or_404(
+        Claim,
+        id=claim_id,
+        claimant=request.user,
+        status='APPROVED',
+        returned=True,
+        received=False
+    )
+
+    claim.received = True
+    claim.received_at = timezone.now()
+    claim.save()
+
+    messages.success(
+        request,
+        "You have successfully confirmed receiving the item!"
+    )
+
+    return redirect('my_claims')

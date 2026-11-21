@@ -8,6 +8,12 @@
 
     <h1>My Claims</h1>
 
+    {% if messages %}
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+    {% endif %}
+
     {% if claims %}
         {% for claim in claims %}
 
@@ -19,6 +25,16 @@
                 <p>Claim Date: {{ claim.created_at }}</p>
 
                 <p>Claim Status: {{ claim.get_status_display }}</p>
+
+                {% if claim.status == 'APPROVED' and claim.returned and not claim.received %}
+                    <form method="POST" action="{% url 'confirm_item_received' claim.id %}">
+                        {% csrf_token %}
+                        <button type="submit">Confirm Item Received</button>
+                    </form>
+                {% elif claim.received %}
+                    <p>Item Received: Confirmed</p>
+                    <p>Received At: {{ claim.received_at }}</p>
+                {% endif %}
 
                 {% if claim.verification_passed %}
                     <p>Verification: Successful</p>

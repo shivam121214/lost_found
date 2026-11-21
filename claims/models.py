@@ -19,6 +19,14 @@ class Claim(models.Model):
         related_name='claims'
     )
 
+    lost_item = models.ForeignKey(
+        Item,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='matched_claims'
+    )
+
     claimant = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -38,6 +46,11 @@ class Claim(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     returned = models.BooleanField(default=False)
+    received = models.BooleanField(default=False)
+    received_at = models.DateTimeField(
+        null=True,
+        blank=True
+    )
 
     returned_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,

@@ -5,6 +5,11 @@
   </head>
   <body>
     <h1>Pending Claims</h1>
+    {% if messages %}
+      {% for message in messages %}
+          <p>{{ message }}</p>
+      {% endfor %}
+  {% endif %}
 
     {% if claims %} {% for claim in claims %} <
     <div>
@@ -21,35 +26,36 @@
       <p>Verification: Successful</p>
       {% else %}
       <p>Verification: Not completed</p>
-      {% endif %} {% if claim.status == 'PENDING' %} {% if
-      claim.verification_passed %}
-      <form
-        method="POST"
-        action="{% url 'update_claim_status' claim.id 'approve' %}"
-      >
-        {% csrf_token %}
-        <button type="submit">Approve Claim</button>
-      </form>
+      {% endif %} 
+
+      {% if claim.status == 'PENDING' %}
+
+          {% if claim.verification_passed %}
+              <form method="POST" action="{% url 'update_claim_status' claim.id 'approve' %}">
+                  {% csrf_token %}
+                  <button type="submit">Approve Claim</button>
+              </form>
+          {% endif %}
+
+          <form method="POST" action="{% url 'update_claim_status' claim.id 'reject' %}">
+              {% csrf_token %}
+              <button type="submit">Reject Claim</button>
+          </form>
+
+      {% elif claim.status == 'APPROVED' %}
+
+          {% if not claim.returned %}
+              <form method="POST" action="{% url 'mark_as_returned' claim.id %}">
+                  {% csrf_token %}
+                  <button type="submit">Mark as Returned</button>
+              </form>
+          {% else %}
+              <p>Item: Returned successfully</p>
+              <p>Returned By: {{ claim.returned_by.email }}</p>
+              <p>Returned At: {{ claim.returned_at }}</p>
+          {% endif %}
+
       {% endif %}
-
-      <form
-        method="POST"
-        action="{% url 'update_claim_status' claim.id 'reject' %}"
-      >
-        {% csrf_token %}
-        <button type="submit">Reject Claim</button>
-      </form>
-
-      {% elif claim.status == 'APPROVED' %} {% if not claim.returned %}
-      <form method="POST" action="{% url 'mark_as_returned' claim.id %}">
-        {% csrf_token %}
-        <button type="submit">Mark as Returned</button>
-      </form>
-      {% else %}
-      <p>Item: Returned successfully</p>
-      <p>Returned By: {{ claim.returned_by.email }}</p>
-      <p>Returned At: {{ claim.returned_at }}</p>
-      {% endif %} {% endif %}
 
       <hr />
     </div>

@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .forms import ItemForm
 from .models import Item
+from django.db.models import Q
 
 
 @login_required
@@ -45,8 +46,7 @@ def my_reports(request):
 
 @login_required
 def browse_items(request):
-    items = Item.objects.all().order_by('-created_at')
-
+    items = Item.objects.exclude(Q(claims__received=True) | Q(matched_claims__received=True)).distinct().order_by('-created_at')
     search = request.GET.get('search')
     item_type = request.GET.get('item_type')
     category = request.GET.get('category')
