@@ -5,6 +5,9 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from .models import User
 
+def home(request):
+    return render(request, 'accounts/home.html')
+
 def register(request):
     if request.method == 'POST':
         email = request.POST.get('email')
@@ -34,7 +37,7 @@ def register(request):
         )
 
         messages.success(request, 'Registration successful!')
-        return redirect('register')
+        return redirect('login')
 
     return render(request, 'accounts/register.html')
 

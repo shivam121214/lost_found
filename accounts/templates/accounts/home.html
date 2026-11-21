@@ -1,0 +1,58 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>University Lost & Found</title>
+</head>
+<body>
+
+    <header>
+        <h1>University Lost & Found</h1>
+
+        <nav>
+            <a href="{% url 'login' %}">Login</a>
+            |
+            <a href="{% url 'register' %}">Register</a>
+        </nav>
+    </header>
+
+    <hr>
+
+    <main>
+        <h2>Lost Something? Found Something?</h2>
+
+        <p>
+            A trusted platform for students to report lost items,
+            report found belongings, and safely reunite items with
+            their rightful owners.
+        </p>
+
+        <a href="{% url 'login' %}">
+            <button>Browse Items</button>
+        </a>
+
+        <a href="{% url 'register' %}">
+            <button>Get Started</button>
+        </a>
+
+        <h2>How It Works</h2>
+
+        <h3>1. Report an Item</h3>
+        <p>Report something you have lost or found on campus.</p>
+
+        <h3>2. Verify Ownership</h3>
+        <p>Claimants answer private verification questions.</p>
+
+        <h3>3. Collect Your Item</h3>
+        <p>Staff supervises the handover, and the owner confirms receipt.</p>
+
+    </main>
+
+    <hr>
+
+    <footer>
+        <p>University Lost & Found System</p>
+    </footer>
+
+</body>
+</html>

@@ -2,10 +2,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Student Login</title>
+    <title>Login - University Lost & Found</title>
 </head>
 <body>
-    <h2>Student Login</h2>
+
+    <h2>Login</h2>
 
     {% if messages %}
         {% for message in messages %}
@@ -26,5 +27,15 @@
 
         <button type="submit">Login</button>
     </form>
+
+    <p>
+        Don't have an account?
+        <a href="{% url 'register' %}">Create New Account</a>
+    </p>
+
+    <p>
+        <a href="{% url 'home' %}">Back to Home</a>
+    </p>
+
 </body>
 </html>
