@@ -1,69 +1,145 @@
-<!doctype html>
+
+{% load static %}
+<!DOCTYPE html>
 <html>
-  <head>
-    <title>Staff Claims</title>
-  </head>
-  <body>
-    <h1>Pending Claims</h1>
-    {% if messages %}
-      {% for message in messages %}
-          <p>{{ message }}</p>
-      {% endfor %}
-  {% endif %}
+<head>
+    <title>Staff Claims - CampusFind</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body class="dashboard-page">
 
-    {% if claims %} {% for claim in claims %} <
-    <div>
-      <h3>Item: {{ claim.item.name }}</h3>
+    <header class="dashboard-navbar">
+        <a href="{% url 'dashboard' %}" class="logo">
+            Campus<span>Find</span>
+        </a>
 
-      <p>Claimant: {{ claim.claimant.email }}</p>
-      <p>University ID: {{ claim.claimant.university_id }}</p>
-      <p>Department: {{ claim.claimant.department }}</p>
-      <p>Claim Date: {{ claim.created_at }}</p>
+        <a href="{% url 'browse_items' %}" class="back-link">
+            ← Browse Items
+        </a>
+    </header>
 
-      <p>Claim Status: {{ claim.get_status_display }}</p>
+    <main class="listing-container">
 
-      {% if claim.verification_passed %}
-      <p>Verification: Successful</p>
-      {% else %}
-      <p>Verification: Not completed</p>
-      {% endif %} 
+        <div class="listing-heading">
+            <span class="dashboard-tag">STAFF PANEL</span>
+            <h1>Pending Claims</h1>
+            <p>Review claimant information, verification results and item handovers.</p>
+        </div>
 
-      {% if claim.status == 'PENDING' %}
+        {% if messages %}
+            {% for message in messages %}
+                <p class="auth-message">{{ message }}</p>
+            {% endfor %}
+        {% endif %}
 
-          {% if claim.verification_passed %}
-              <form method="POST" action="{% url 'update_claim_status' claim.id 'approve' %}">
-                  {% csrf_token %}
-                  <button type="submit">Approve Claim</button>
-              </form>
-          {% endif %}
+        {% if claims %}
 
-          <form method="POST" action="{% url 'update_claim_status' claim.id 'reject' %}">
-              {% csrf_token %}
-              <button type="submit">Reject Claim</button>
-          </form>
+            <div class="staff-claims-grid">
 
-      {% elif claim.status == 'APPROVED' %}
+                {% for claim in claims %}
 
-          {% if not claim.returned %}
-              <form method="POST" action="{% url 'mark_as_returned' claim.id %}">
-                  {% csrf_token %}
-                  <button type="submit">Mark as Returned</button>
-              </form>
-          {% else %}
-              <p>Item: Returned successfully</p>
-              <p>Returned By: {{ claim.returned_by.email }}</p>
-              <p>Returned At: {{ claim.returned_at }}</p>
-          {% endif %}
+                    <div class="staff-claim-card">
 
-      {% endif %}
+                        <div class="staff-claim-header">
+                            <div class="claim-icon">📦</div>
+                            <div>
+                                <span class="claim-label">CLAIMED ITEM</span>
+                                <h2>{{ claim.item.name }}</h2>
+                            </div>
+                        </div>
 
-      <hr />
-    </div>
+                        <div class="staff-claim-section">
+                            <h3>Claimant Information</h3>
 
-    {% endfor %} {% else %}
-    <p>No pending claims available.</p>
-    {% endif %}
+                            <p><strong>Email:</strong> {{ claim.claimant.email }}</p>
+                            <p><strong>University ID:</strong> {{ claim.claimant.university_id }}</p>
+                            <p><strong>Department:</strong> {{ claim.claimant.department }}</p>
+                            <p><strong>Claim Date:</strong> {{ claim.created_at }}</p>
+                        </div>
 
-    <a href="{% url 'browse_items' %}">Back to Browse Items</a>
-  </body>
+                        <div class="staff-claim-section">
+                            <h3>Claim Review</h3>
+
+                            <p>
+                                <strong>Claim Status:</strong>
+                                <span class="claim-status">{{ claim.get_status_display }}</span>
+                            </p>
+
+                            {% if claim.verification_passed %}
+                                <p class="verification-success">
+                                    ✓ Verification: Successful
+                                </p>
+                            {% else %}
+                                <p class="verification-pending">
+                                    Verification: Not completed
+                                </p>
+                            {% endif %}
+                        </div>
+
+                        <div class="staff-claim-actions">
+
+                            {% if claim.status == 'PENDING' %}
+
+                                {% if claim.verification_passed %}
+                                    <form method="POST" action="{% url 'update_claim_status' claim.id 'approve' %}">
+                                        {% csrf_token %}
+                                        <button type="submit" class="approve-button">
+                                            Approve Claim
+                                        </button>
+                                    </form>
+                                {% endif %}
+
+                                <form method="POST" action="{% url 'update_claim_status' claim.id 'reject' %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="reject-button">
+                                        Reject Claim
+                                    </button>
+                                </form>
+
+                            {% elif claim.status == 'APPROVED' %}
+
+                                {% if not claim.returned %}
+                                    <form method="POST" action="{% url 'mark_as_returned' claim.id %}">
+                                        {% csrf_token %}
+                                        <button type="submit" class="return-button">
+                                            Mark as Returned
+                                        </button>
+                                    </form>
+                                {% else %}
+                                    <div class="returned-info">
+                                        <p><strong>Item:</strong> Returned successfully</p>
+                                        <p><strong>Returned By:</strong> {{ claim.returned_by.email }}</p>
+                                        <p><strong>Returned At:</strong> {{ claim.returned_at }}</p>
+                                    </div>
+                                {% endif %}
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="empty-state">
+                <div>📋</div>
+                <h2>No Pending Claims</h2>
+                <p>No pending claims available.</p>
+            </div>
+
+        {% endif %}
+
+        <div class="browse-bottom">
+            <a href="{% url 'browse_items' %}" class="secondary-button">
+                Back to Browse Items
+            </a>
+        </div>
+
+    </main>
+
+</body>
 </html>

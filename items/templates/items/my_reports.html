@@ -1,34 +1,77 @@
 
+{% load static %}
 <!DOCTYPE html>
 <html>
 <head>
-    <title>My Reports</title>
+    <title>My Reports - CampusFind</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
-<body>
-    <h1>My Reported Items</h1>
+<body class="dashboard-page">
 
-    {% if items %}
-        {% for item in items %}
-            <div>
-                <h3>{{ item.name }}</h3>
+    <header class="dashboard-navbar">
+        <a href="{% url 'dashboard' %}" class="logo">
+            Campus<span>Find</span>
+        </a>
 
-                <p>Type: {{ item.get_item_type_display }}</p>
-                <p>Category: {{ item.get_category_display }}</p>
-                <p>Description: {{ item.description }}</p>
-                <p>Location: {{ item.location }}</p>
-                <p>Date: {{ item.date_of_occurrence }}</p>
+        <a href="{% url 'dashboard' %}" class="back-link">
+            ← Back to Dashboard
+        </a>
+    </header>
 
-                {% if item.image %}
-                    <img src="{{ item.image.url }}" width="200">
-                {% endif %}
+    <main class="listing-container">
 
-                <hr>
+        <div class="listing-heading">
+            <span class="dashboard-tag">YOUR ACTIVITY</span>
+            <h1>My Reported Items</h1>
+            <p>Keep track of the items you have reported on campus.</p>
+        </div>
+
+        {% if items %}
+            <div class="items-grid">
+
+                {% for item in items %}
+                    <div class="item-card">
+
+                        {% if item.image %}
+                            <img src="{{ item.image.url }}" class="item-image">
+                        {% else %}
+                            <div class="item-image-placeholder">📦</div>
+                        {% endif %}
+
+                        <div class="item-card-content">
+
+                            <div class="item-card-top">
+                                <span class="item-type-tag">{{ item.get_item_type_display }}</span>
+                            </div>
+
+                            <h3>{{ item.name }}</h3>
+
+                            <p class="item-description">{{ item.description }}</p>
+
+                            <div class="item-details">
+                                <p><strong>Category:</strong> {{ item.get_category_display }}</p>
+                                <p><strong>Location:</strong> {{ item.location }}</p>
+                                <p><strong>Date:</strong> {{ item.date_of_occurrence }}</p>
+                            </div>
+
+                        </div>
+                    </div>
+                {% endfor %}
+
             </div>
-        {% endfor %}
-    {% else %}
-        <p>You haven't reported any items yet.</p>
-    {% endif %}
 
-    <a href="{% url 'dashboard' %}">Back to Dashboard</a>
+        {% else %}
+            <div class="empty-state">
+                <div>📋</div>
+                <h2>No Reports Yet</h2>
+                <p>You haven't reported any items yet.</p>
+                <a href="{% url 'report_item' %}" class="primary-button">
+                    Report an Item →
+                </a>
+            </div>
+        {% endif %}
+
+    </main>
+
 </body>
 </html>

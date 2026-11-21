@@ -1,42 +1,107 @@
-<!doctype html>
+
+{% load static %}
+<!DOCTYPE html>
 <html>
-  <head>
-    <title>Student Dashboard</title>
-  </head>
-  <body>
-    <h1>Welcome, {{ request.user.first_name|default:request.user.email }}!</h1>
+<head>
+    <title>Student Dashboard - CampusFind</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body class="dashboard-page">
 
-    <p>University ID: {{ request.user.university_id }}</p>
-    <p>Department: {{ request.user.department }}</p>
-    <p>Role: {{ request.user.role }}</p>
+    <header class="dashboard-navbar">
+        <a href="{% url 'dashboard' %}" class="logo">
+            Campus<span>Find</span>
+        </a>
 
-    <h2>University Lost & Found System</h2>
+        <form method="POST" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit" class="logout-button">Logout ↗</button>
+        </form>
+    </header>
 
-    <a href="{% url 'report_item' %}">
-      <button type="button">Report a Lost or Found Item</button>
-    </a>
+    <main class="dashboard-container">
 
-    <br /><br />
+        <section class="welcome-section">
+            <div>
+                <span class="dashboard-tag">STUDENT PORTAL</span>
 
-    <a href="{% url 'my_reports' %}">
-      <button type="button">My Reports</button>
-    </a>
+                <h1>Welcome, {{ request.user.first_name|default:request.user.email }}!</h1>
 
-    <a href="{% url 'my_claims' %}">
-      <button type="button">My Claims</button>
-    </a>
+                <p>
+                    Manage your lost and found reports, track claims,
+                    and help reunite belongings with their owners.
+                </p>
+            </div>
 
-    <br /><br />
+            <div class="welcome-icon">🎓</div>
+        </section>
 
-    <a href="{% url 'browse_items' %}">
-      <button type="button">Browse Lost & Found Items</button>
-    </a>
+        <section class="profile-section">
+            <h2>Your Profile</h2>
 
-    <p>Your dashboard is ready.</p>
+            <div class="profile-details">
+                <div>
+                    <span>University ID</span>
+                    <strong>{{ request.user.university_id }}</strong>
+                </div>
 
-    <form method="POST" action="{% url 'logout' %}">
-      {% csrf_token %}
-      <button type="submit">Logout</button>
-    </form>
-  </body>
+                <div>
+                    <span>Department</span>
+                    <strong>{{ request.user.department }}</strong>
+                </div>
+
+                <div>
+                    <span>Role</span>
+                    <strong>{{ request.user.role }}</strong>
+                </div>
+            </div>
+        </section>
+
+        <section class="dashboard-actions">
+            <div class="dashboard-heading">
+                <h2>What would you like to do?</h2>
+                <p>Choose an action to get started.</p>
+            </div>
+
+            <div class="dashboard-grid">
+
+                <a href="{% url 'report_item' %}" class="dashboard-card">
+                    <div class="dashboard-card-icon">📢</div>
+                    <h3>Report an Item</h3>
+                    <p>Report something you've lost or found on campus.</p>
+                    <span>Get Started →</span>
+                </a>
+
+                <a href="{% url 'my_reports' %}" class="dashboard-card">
+                    <div class="dashboard-card-icon">📋</div>
+                    <h3>My Reports</h3>
+                    <p>View and manage all the items you've reported.</p>
+                    <span>View Reports →</span>
+                </a>
+
+                <a href="{% url 'my_claims' %}" class="dashboard-card">
+                    <div class="dashboard-card-icon">📦</div>
+                    <h3>My Claims</h3>
+                    <p>Track your claims and verification status.</p>
+                    <span>View Claims →</span>
+                </a>
+
+                <a href="{% url 'browse_items' %}" class="dashboard-card">
+                    <div class="dashboard-card-icon">🔍</div>
+                    <h3>Browse Items</h3>
+                    <p>Explore lost and found items reported on campus.</p>
+                    <span>Explore Items →</span>
+                </a>
+
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="footer">
+        <h3>CampusFind</h3>
+        <p>University Lost & Found Management System</p>
+    </footer>
+
+</body>
 </html>

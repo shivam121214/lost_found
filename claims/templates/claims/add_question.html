@@ -1,28 +1,64 @@
 
+{% load static %}
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Add Verification Question</title>
+    <title>Add Verification Question - CampusFind</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
-<body>
+<body class="dashboard-page">
 
-    <h1>Add Verification Question</h1>
+    <header class="dashboard-navbar">
+        <a href="{% url 'dashboard' %}" class="logo">
+            Campus<span>Find</span>
+        </a>
 
-    <h3>Item: {{ item.name }}</h3>
-    <p>
-    Create questions using the private identifying details of this item.
-    Do not ask questions whose answers are already visible in the public description.
-    </p>
+        <a href="{% url 'browse_items' %}" class="back-link">
+            ← Browse Items
+        </a>
+    </header>
 
-    <form method="POST">
-        {% csrf_token %}
+    <main class="verification-container">
 
-        {{ form.as_p }}
+        <div class="listing-heading">
+            <span class="dashboard-tag">STAFF PANEL</span>
+            <h1>Add Verification Question</h1>
+            <p>Create a question to help verify the rightful owner of a found item.</p>
+        </div>
 
-        <button type="submit">Save Question</button>
-    </form>
+        <section class="verification-card">
 
-    <a href="{% url 'browse_items' %}">Back to Browse Items</a>
+            <div class="verification-item">
+                <div class="verification-icon">📦</div>
+                <div>
+                    <span class="claim-label">SELECTED ITEM</span>
+                    <h2>{{ item.name }}</h2>
+                </div>
+            </div>
+
+            <div class="verification-guidelines">
+                <h3>Question Guidelines</h3>
+                <p>
+                    Create questions using the private identifying details of this item.
+                    Do not ask questions whose answers are already visible in the public description.
+                </p>
+            </div>
+
+            <form method="POST" class="verification-form">
+                {% csrf_token %}
+
+                {{ form.as_p }}
+
+                <button type="submit">Save Question</button>
+            </form>
+
+            <div class="verification-back">
+                <a href="{% url 'browse_items' %}">Back to Browse Items</a>
+            </div>
+
+        </section>
+
+    </main>
 
 </body>
 </html>

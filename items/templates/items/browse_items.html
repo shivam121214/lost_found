@@ -1,98 +1,162 @@
 
+{% load static %}
 <!doctype html>
 <html>
 <head>
-    <title>Browse Items</title>
+    <title>Browse Items - CampusFind</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
-<body>
+<body class="dashboard-page">
 
-    <h1>All Lost and Found Items</h1>
-    {% if messages %}
-        {% for message in messages %}
-            <p>{{ message }}</p>
-        {% endfor %}
-    {% endif %}
+    <header class="dashboard-navbar">
+        <a href="{% url 'dashboard' %}" class="logo">
+            Campus<span>Find</span>
+        </a>
 
-    <form method="GET">
-        <input
-            type="text"
-            name="search"
-            placeholder="Search by item name"
-            value="{{ request.GET.search }}"
-        />
+        {% if request.user.role == 'STAFF' %}
+            <a href="{% url 'staff_claims' %}" class="back-link">Review Claims</a>
+        {% else %}
+            <a href="{% url 'dashboard' %}" class="back-link">← Dashboard</a>
+        {% endif %}
+    </header>
 
-        <select name="item_type">
-            <option value="">All Types</option>
-            <option value="LOST">Lost</option>
-            <option value="FOUND">Found</option>
-        </select>
+    <main class="listing-container">
 
-        <select name="category">
-            <option value="">All Categories</option>
-            <option value="ELECTRONICS">Electronics</option>
-            <option value="DOCUMENTS">Documents</option>
-            <option value="ACCESSORIES">Accessories</option>
-            <option value="CLOTHING">Clothing</option>
-            <option value="OTHER">Other</option>
-        </select>
-
-        <input
-            type="text"
-            name="location"
-            placeholder="Search by location"
-            value="{{ request.GET.location }}"
-        />
-
-        <button type="submit">Search / Filter</button>
-        <a href="{% url 'browse_items' %}">Clear Filters</a>
-    </form>
-
-    <hr>
-
-    {% for item in items %}
-
-        <div>
-            <h3>{{ item.name }}</h3>
-
-            <p>Status: {{ item.get_item_type_display }}</p>
-            <p>Category: {{ item.get_category_display }}</p>
-            <p>Description: {{ item.description }}</p>
-            <p>Location: {{ item.location }}</p>
-            <p>Date: {{ item.date_of_occurrence }}</p>
-
-            {% if item.image %}
-                <img src="{{ item.image.url }}" width="200">
-            {% endif %}
-
-            {% if request.user.role == 'STAFF' and item.item_type == 'FOUND' %}
-                <a href="{% url 'review_item' item.id %}">
-                    <button type="button">Review Private Details</button>
-                </a>
-            {% endif %}
-
-            {% if item.item_type == 'FOUND' and item.reported_by != request.user %}
-                <a href="{% url 'submit_claim' item.id %}">
-                    {% csrf_token %}
-                    <button type="button">Claim This Item</button>
-                </a>
-            {% endif %}
-
-            <hr>
+        <div class="listing-heading">
+            <span class="dashboard-tag">CAMPUS COLLECTION</span>
+            <h1>Browse Lost & Found Items</h1>
+            <p>Search reported belongings and help reunite them with their owners.</p>
         </div>
 
-    {% empty %}
+        {% if messages %}
+            {% for message in messages %}
+                <p class="auth-message">{{ message }}</p>
+            {% endfor %}
+        {% endif %}
 
-        <p>No items have been reported yet.</p>
+        <section class="filter-card">
+            <h3>Find an Item</h3>
 
-    {% endfor %}
+            <form method="GET" class="filter-form">
 
-    {% if request.user.role == 'STAFF' %}
-    <a href="{% url 'staff_claims' %}">
-        <button type="button">Review Pending Claims</button>
-    </a>
-    {% else %}
-        <a href="{% url 'dashboard' %}">Back to Dashboard</a>
-    {% endif %}
+                <input
+                    type="text"
+                    name="search"
+                    placeholder="Search by item name"
+                    value="{{ request.GET.search }}"
+                />
+
+                <select name="item_type">
+                    <option value="">All Types</option>
+                    <option value="LOST">Lost</option>
+                    <option value="FOUND">Found</option>
+                </select>
+
+                <select name="category">
+                    <option value="">All Categories</option>
+                    <option value="ELECTRONICS">Electronics</option>
+                    <option value="DOCUMENTS">Documents</option>
+                    <option value="ACCESSORIES">Accessories</option>
+                    <option value="CLOTHING">Clothing</option>
+                    <option value="OTHER">Other</option>
+                </select>
+
+                <input
+                    type="text"
+                    name="location"
+                    placeholder="Search by location"
+                    value="{{ request.GET.location }}"
+                />
+
+                <div class="filter-actions">
+                    <button type="submit">Search / Filter</button>
+                    <a href="{% url 'browse_items' %}" class="clear-filter">Clear Filters</a>
+                </div>
+
+            </form>
+        </section>
+
+        <div class="browse-results-heading">
+            <h2>Reported Items</h2>
+        </div>
+
+        <div class="items-grid">
+
+            {% for item in items %}
+
+                <div class="item-card">
+
+                    {% if item.image %}
+                        <img src="{{ item.image.url }}" class="item-image">
+                    {% else %}
+                        <div class="item-image-placeholder">📦</div>
+                    {% endif %}
+
+                    <div class="item-card-content">
+
+                        <div class="item-card-top">
+                            <span class="item-type-tag">
+                                {{ item.get_item_type_display }}
+                            </span>
+                        </div>
+
+                        <h3>{{ item.name }}</h3>
+
+                        <p class="item-description">{{ item.description }}</p>
+
+                        <div class="item-details">
+                            <p><strong>Category:</strong> {{ item.get_category_display }}</p>
+                            <p><strong>Location:</strong> {{ item.location }}</p>
+                            <p><strong>Date:</strong> {{ item.date_of_occurrence }}</p>
+                        </div>
+
+                        <div class="item-card-actions">
+
+                            {% if request.user.role == 'STAFF' and item.item_type == 'FOUND' %}
+                                <a href="{% url 'review_item' item.id %}" class="card-action secondary-action">
+                                    Review Private Details
+                                </a>
+                            {% endif %}
+
+                            {% if request.user.role == 'STUDENT' and item.item_type == 'FOUND' and item.reported_by != request.user %}
+                                <a href="{% url 'submit_claim' item.id %}" class="card-action primary-action">
+                                    {% csrf_token %}
+                                    Claim This Item
+                                </a>
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+                </div>
+
+            {% empty %}
+
+                <div class="empty-state">
+                    <div>🔍</div>
+                    <h2>No Items Found</h2>
+                    <p>No items have been reported yet.</p>
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+        {% if request.user.role == 'STAFF' %}
+            <div class="browse-bottom">
+                <a href="{% url 'staff_claims' %}" class="primary-button">
+                    Review Pending Claims →
+                </a>
+            </div>
+        {% else %}
+            <div class="browse-bottom">
+                <a href="{% url 'dashboard' %}" class="secondary-button">
+                    Back to Dashboard
+                </a>
+            </div>
+        {% endif %}
+
+    </main>
 
 </body>
 </html>

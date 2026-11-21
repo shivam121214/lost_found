@@ -1,33 +1,80 @@
 
+{% load static %}
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Verify Claim</title>
+    <title>Verify Claim - CampusFind</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
-<body>
+<body class="dashboard-page">
 
-    <h1>Verify Your Claim</h1>
-    {% if messages %}
-        {% for message in messages %}
-            <p>{{ message }}</p>
-        {% endfor %}
-    {% endif %}
+    <header class="dashboard-navbar">
+        <a href="{% url 'dashboard' %}" class="logo">
+            Campus<span>Find</span>
+        </a>
 
-    <h3>Item: {{ claim.item.name }}</h3>
+        <a href="{% url 'browse_items' %}" class="back-link">
+            ← Browse Items
+        </a>
+    </header>
 
-    <p>Answer the following questions to verify ownership.</p>
+    <main class="verify-container">
 
-    <p>Attempts used: {{ claim.verification_attempts }}/3</p>
+        <div class="listing-heading">
+            <span class="dashboard-tag">OWNERSHIP VERIFICATION</span>
+            <h1>Verify Your Claim</h1>
+            <p>Answer the questions below to help us verify that the item belongs to you.</p>
+        </div>
 
-    <form method="POST">
-        {% csrf_token %}
+        <section class="verify-card">
 
-        {{ form.as_p }}
+            {% if messages %}
+                {% for message in messages %}
+                    <p class="auth-message">{{ message }}</p>
+                {% endfor %}
+            {% endif %}
 
-        <button type="submit">Submit Answers</button>
-    </form>
+            <div class="verify-item">
+                <div class="verify-icon">📦</div>
+                <div>
+                    <span class="claim-label">CLAIMED ITEM</span>
+                    <h2>{{ claim.item.name }}</h2>
+                </div>
+            </div>
 
-    <a href="{% url 'browse_items' %}">Back to Browse Items</a>
+            <div class="attempts-box">
+                <div>
+                    <h3>Verification Attempts</h3>
+                    <p>You have a maximum of 3 attempts.</p>
+                </div>
+
+                <div class="attempt-count">
+                    {{ claim.verification_attempts }}/3
+                </div>
+            </div>
+
+            <div class="verify-instructions">
+                <strong>Important:</strong>
+                Answer the following questions accurately. Your answers will be
+                checked against the private details provided by the person who
+                reported the item.
+            </div>
+
+            <form method="POST" class="verify-form">
+                {% csrf_token %}
+
+                {{ form.as_p }}
+
+                <button type="submit">Submit Answers</button>
+            </form>
+
+            <div class="verify-back">
+                <a href="{% url 'browse_items' %}">Back to Browse Items</a>
+            </div>
+
+        </section>
+
+    </main>
 
 </body>
 </html>

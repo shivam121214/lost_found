@@ -1,64 +1,133 @@
 
+{% load static %}
 <!DOCTYPE html>
 <html>
 <head>
-    <title>My Claims</title>
+    <title>My Claims - CampusFind</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
-<body>
+<body class="dashboard-page">
 
-    <h1>My Claims</h1>
+    <header class="dashboard-navbar">
+        <a href="{% url 'dashboard' %}" class="logo">
+            Campus<span>Find</span>
+        </a>
 
-    {% if messages %}
-        {% for message in messages %}
-            <p>{{ message }}</p>
-        {% endfor %}
-    {% endif %}
+        <a href="{% url 'dashboard' %}" class="back-link">
+            ← Dashboard
+        </a>
+    </header>
 
-    {% if claims %}
-        {% for claim in claims %}
+    <main class="listing-container">
 
-            <div>
-                <h3>{{ claim.item.name }}</h3>
+        <div class="listing-heading">
+            <span class="dashboard-tag">STUDENT PANEL</span>
+            <h1>My Claims</h1>
+            <p>Track your claimed items and their verification and return status.</p>
+        </div>
 
-                <p>Category: {{ claim.item.get_category_display }}</p>
+        {% if messages %}
+            {% for message in messages %}
+                <p class="auth-message">{{ message }}</p>
+            {% endfor %}
+        {% endif %}
 
-                <p>Claim Date: {{ claim.created_at }}</p>
+        {% if claims %}
 
-                <p>Claim Status: {{ claim.get_status_display }}</p>
+            <div class="claims-grid">
 
-                {% if claim.status == 'APPROVED' and claim.returned and not claim.received %}
-                    <form method="POST" action="{% url 'confirm_item_received' claim.id %}">
-                        {% csrf_token %}
-                        <button type="submit">Confirm Item Received</button>
-                    </form>
-                {% elif claim.received %}
-                    <p>Item Received: Confirmed</p>
-                    <p>Received At: {{ claim.received_at }}</p>
-                {% endif %}
+                {% for claim in claims %}
 
-                {% if claim.verification_passed %}
-                    <p>Verification: Successful</p>
-                {% else %}
-                    <p>Verification: Pending</p>
+                    <div class="my-claim-card">
 
-                    {% if claim.verification_attempts < 3 %}
-                        <a href="{% url 'verify_claim' claim.id %}">
-                            Continue Verification
-                        </a>
-                    {% else %}
-                        <p>Maximum verification attempts reached.</p>
-                    {% endif %}
-                {% endif %}
+                        <div class="my-claim-header">
+                            <div class="claim-icon">📦</div>
+                            <div>
+                                <h3>{{ claim.item.name }}</h3>
+                                <span class="claim-category">
+                                    {{ claim.item.get_category_display }}
+                                </span>
+                            </div>
+                        </div>
 
-                <hr>
+                        <div class="my-claim-details">
+                            <p>
+                                <strong>Claim Date:</strong>
+                                {{ claim.created_at }}
+                            </p>
+
+                            <p>
+                                <strong>Claim Status:</strong>
+                                <span class="claim-status">
+                                    {{ claim.get_status_display }}
+                                </span>
+                            </p>
+                        </div>
+
+                        {% if claim.status == 'APPROVED' and claim.returned and not claim.received %}
+                            <div class="received-action">
+                                <p>Your item has been marked as returned by staff.</p>
+
+                                <form method="POST" action="{% url 'confirm_item_received' claim.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit">Confirm Item Received</button>
+                                </form>
+                            </div>
+                        {% elif claim.received %}
+                            <div class="received-success">
+                                <p><strong>Item Received:</strong> Confirmed</p>
+                                <p><strong>Received At:</strong> {{ claim.received_at }}</p>
+                            </div>
+                        {% endif %}
+
+                        <div class="verification-status">
+                            {% if claim.verification_passed %}
+                                <p class="verification-success">
+                                    ✓ Verification: Successful
+                                </p>
+                            {% else %}
+                                <p class="verification-pending">
+                                    Verification: Pending
+                                </p>
+
+                                {% if claim.verification_attempts < 3 %}
+                                    <a href="{% url 'verify_claim' claim.id %}" class="claim-verify-link">
+                                        Continue Verification →
+                                    </a>
+                                {% else %}
+                                    <p class="verification-limit">
+                                        Maximum verification attempts reached.
+                                    </p>
+                                {% endif %}
+                            {% endif %}
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
             </div>
 
-        {% endfor %}
-    {% else %}
-        <p>You haven't submitted any claims yet.</p>
-    {% endif %}
+        {% else %}
 
-    <a href="{% url 'dashboard' %}">Back to Dashboard</a>
+            <div class="empty-state">
+                <div>📋</div>
+                <h2>No Claims Yet</h2>
+                <p>You haven't submitted any claims yet.</p>
+                <a href="{% url 'browse_items' %}" class="primary-button">
+                    Browse Found Items
+                </a>
+            </div>
+
+        {% endif %}
+
+        <div class="browse-bottom">
+            <a href="{% url 'dashboard' %}" class="secondary-button">
+                Back to Dashboard
+            </a>
+        </div>
+
+    </main>
 
 </body>
 </html>

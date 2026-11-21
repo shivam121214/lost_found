@@ -1,26 +1,64 @@
 
+{% load static %}
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Submit Claim</title>
+    <title>Submit Claim - CampusFind</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
-<body>
+<body class="dashboard-page">
 
-    <h1>Claim Found Item</h1>
+    <header class="dashboard-navbar">
+        <a href="{% url 'dashboard' %}" class="logo">
+            Campus<span>Find</span>
+        </a>
 
-    <h3>Found Item: {{ item.name }}</h3>
+        <a href="{% url 'browse_items' %}" class="back-link">
+            ← Browse Items
+        </a>
+    </header>
 
-    <p>Select the LOST report that matches this found item.</p>
+    <main class="claim-container">
 
-    <form method="POST">
-        {% csrf_token %}
+        <div class="listing-heading">
+            <span class="dashboard-tag">ITEM RECOVERY</span>
+            <h1>Claim Found Item</h1>
+            <p>Identify the lost-item report that matches the found item.</p>
+        </div>
 
-        {{ form.as_p }}
+        <section class="claim-card">
 
-        <button type="submit">Continue to Verification</button>
-    </form>
+            <div class="claim-item-info">
+                <div class="claim-icon">📦</div>
+                <div>
+                    <span class="claim-label">FOUND ITEM</span>
+                    <h2>{{ item.name }}</h2>
+                </div>
+            </div>
 
-    <a href="{% url 'browse_items' %}">Cancel</a>
+            <div class="claim-instructions">
+                <h3>Select Your Lost Item Report</h3>
+                <p>
+                    Choose the LOST report that matches this found item.
+                    You will continue to the verification step after submitting.
+                </p>
+            </div>
+
+            <form method="POST" class="claim-form">
+                {% csrf_token %}
+
+                {{ form.as_p }}
+
+                <button type="submit">Continue to Verification →</button>
+            </form>
+
+            <div class="claim-cancel">
+                <a href="{% url 'browse_items' %}">Cancel and go back</a>
+            </div>
+
+        </section>
+
+    </main>
 
 </body>
 </html>

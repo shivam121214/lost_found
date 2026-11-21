@@ -1,47 +1,82 @@
 
+{% load static %}
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Review Found Item</title>
+    <title>Review Found Item - CampusFind</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
-<body>
+<body class="dashboard-page">
 
-    <h1>Review Found Item</h1>
+    <header class="dashboard-navbar">
+        <a href="{% url 'dashboard' %}" class="logo">
+            Campus<span>Find</span>
+        </a>
 
-    <h3>{{ item.name }}</h3>
+        <a href="{% url 'browse_items' %}" class="back-link">
+            ← Browse Items
+        </a>
+    </header>
 
-    <p>
-        <strong>Reporter Contact Number:</strong>
-        {% if item.contact_number %}
-            {{ item.contact_number }}
-        {% else %}
-            Not provided
-        {% endif %}
-    </p>
+    <main class="review-container">
 
-    <p><strong>Category:</strong> {{ item.get_category_display }}</p>
+        <div class="listing-heading">
+            <span class="dashboard-tag">STAFF PANEL</span>
+            <h1>Review Found Item</h1>
+            <p>Review the item information and private identifying details.</p>
+        </div>
 
-    <p><strong>Public Description:</strong> {{ item.description }}</p>
+        <section class="review-card">
 
-    <hr>
+            <div class="review-item-header">
+                <div>
+                    <span class="item-type-tag">Found Item</span>
+                    <h2>{{ item.name }}</h2>
+                </div>
+                <div class="review-item-icon">📦</div>
+            </div>
 
-    <h3>Private Identifying Details (Staff Only)</h3>
+            <div class="review-section">
+                <h3>Public Information</h3>
 
-    {% if item.private_details %}
-        <p>{{ item.private_details }}</p>
-    {% else %}
-        <p>No private details were provided.</p>
-    {% endif %}
+                <p>
+                    <strong>Reporter Contact Number:</strong>
+                    {% if item.contact_number %}
+                        {{ item.contact_number }}
+                    {% else %}
+                        Not provided
+                    {% endif %}
+                </p>
 
-    <hr>
+                <p><strong>Category:</strong> {{ item.get_category_display }}</p>
 
-    <a href="{% url 'add_verification_question' item.id %}">
-        Add Verification Question
-    </a>
+                <p><strong>Public Description:</strong> {{ item.description }}</p>
+            </div>
 
-    <br><br>
+            <div class="review-section private-details">
+                <h3>🔒 Private Identifying Details</h3>
+                <p class="private-note">Staff only — do not share these details with claimants.</p>
 
-    <a href="{% url 'browse_items' %}">Back to Browse Items</a>
+                {% if item.private_details %}
+                    <p>{{ item.private_details }}</p>
+                {% else %}
+                    <p>No private details were provided.</p>
+                {% endif %}
+            </div>
+
+            <div class="review-actions">
+                <a href="{% url 'add_verification_question' item.id %}" class="primary-button">
+                    + Add Verification Question
+                </a>
+
+                <a href="{% url 'browse_items' %}" class="secondary-button">
+                    Back to Browse Items
+                </a>
+            </div>
+
+        </section>
+
+    </main>
 
 </body>
 </html>

@@ -1,57 +1,82 @@
 
+{% load static %}
 <!DOCTYPE html>
 <html>
 <head>
     <title>University Lost & Found</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
 
-    <header>
-        <h1>University Lost & Found</h1>
+    <header class="navbar">
+        <div class="logo">Campus<span>Find</span></div>
 
         <nav>
             <a href="{% url 'login' %}">Login</a>
-            |
-            <a href="{% url 'register' %}">Register</a>
+            <a href="{% url 'register' %}" class="nav-button">Get Started</a>
         </nav>
     </header>
 
-    <hr>
-
     <main>
-        <h2>Lost Something? Found Something?</h2>
+        <section class="hero">
+            <div class="hero-content">
+                <span class="hero-tag">YOUR CAMPUS, CONNECTED</span>
 
-        <p>
-            A trusted platform for students to report lost items,
-            report found belongings, and safely reunite items with
-            their rightful owners.
-        </p>
+                <h1>Lost Something?<br>
+                    <span>Let's Find It.</span>
+                </h1>
 
-        <a href="{% url 'login' %}">
-            <button>Browse Items</button>
-        </a>
+                <p>
+                    A smarter and safer way to report lost belongings,
+                    find missing items, and reconnect people with what matters.
+                </p>
 
-        <a href="{% url 'register' %}">
-            <button>Get Started</button>
-        </a>
+                <div class="hero-buttons">
+                    <a href="{% url 'login' %}" class="primary-button">Browse Items →</a>
+                    <a href="{% url 'register' %}" class="secondary-button">Create Account</a>
+                </div>
+            </div>
 
-        <h2>How It Works</h2>
+            <div class="hero-visual">
+                <div class="visual-icon">🔎</div>
+                <h3>Lost. Found. Returned.</h3>
+                <p>Making campus life a little easier, one item at a time.</p>
+            </div>
+        </section>
 
-        <h3>1. Report an Item</h3>
-        <p>Report something you have lost or found on campus.</p>
+        <section class="how-section">
+            <div class="section-heading">
+                <span>HOW IT WORKS</span>
+                <h2>Three simple steps</h2>
+                <p>Getting your belongings back has never been easier.</p>
+            </div>
 
-        <h3>2. Verify Ownership</h3>
-        <p>Claimants answer private verification questions.</p>
+            <div class="feature-container">
+                <div class="feature-card">
+                    <div class="feature-icon">📢</div>
+                    <h3>01. Report an Item</h3>
+                    <p>Report something you've lost or found on campus with its details.</p>
+                </div>
 
-        <h3>3. Collect Your Item</h3>
-        <p>Staff supervises the handover, and the owner confirms receipt.</p>
+                <div class="feature-card">
+                    <div class="feature-icon">🛡️</div>
+                    <h3>02. Verify Ownership</h3>
+                    <p>Answer private verification questions to establish ownership.</p>
+                </div>
 
+                <div class="feature-card">
+                    <div class="feature-icon">🤝</div>
+                    <h3>03. Get It Back</h3>
+                    <p>Collect your item through a staff-supervised handover.</p>
+                </div>
+            </div>
+        </section>
     </main>
 
-    <hr>
-
-    <footer>
-        <p>University Lost & Found System</p>
+    <footer class="footer">
+        <h3>CampusFind</h3>
+        <p>University Lost & Found Management System</p>
+        <p>Helping belongings find their way home.</p>
     </footer>
 
 </body>
